@@ -1,5 +1,6 @@
-
+from .room import Room
 
 class LivingSpace(Room):
-		"""docstring for LivingSpace"""
-		pass 
+	"""docstring for LivingSpace"""
+	max_capacity = 4
+

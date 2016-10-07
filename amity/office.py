@@ -1,5 +1,5 @@
-
+from .room import Room
 
 class Office(Room):
 		"""docstring for Office"""
-		pass
+		max_capacity = 6
