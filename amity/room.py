@@ -12,6 +12,7 @@ class Room(object):
 
     def __init__(self):
         # self.session = sess
+        pass
 
     def create_room(self, room_name, room_type, room_capacity):
         new_room = RoomClass()
@@ -43,4 +44,4 @@ class Room(object):
     	pass
 
 r1 = Room()
-r1.create_room('Krypton', 'Office', 6)
+r1.create_room('Narnia', 'Office', 6)
