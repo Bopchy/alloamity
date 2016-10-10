@@ -1,0 +1,3 @@
+"""
+	Docopt amity file
+"""

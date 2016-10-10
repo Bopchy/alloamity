@@ -8,7 +8,6 @@ class Person(object):
 	def load_people(self):
 		pass
 
-
 	def new_employee(self, first_name, last_name, job_group, want_accomodation, gender):
 		pass
 

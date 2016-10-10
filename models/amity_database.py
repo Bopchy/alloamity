@@ -11,7 +11,6 @@ DBSession = sessionmaker()
 DBSession.configure(bind=db) # Binds the db session to the engine
 sess = DBSession() # Creates session object
 
-
 class Person(Base):
 	"""Database containing Fellows and Staff"""
 	__tablename__= "person"
