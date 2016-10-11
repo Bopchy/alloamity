@@ -1,5 +1,6 @@
 from models.amity_database import Room as RoomClass, Person as PersonClass, sess 
 from models.amity_database import RoomMembers 
+from sqlalchemy.orm.exc import NoResultFound
 import random  
 
 class Room(object):
@@ -20,7 +21,10 @@ class Room(object):
         sess.commit()
 
     def space_available(self, room_name):
-        sa = sess.query(RoomClass).filter_by(room_name=room_name).first() 
+        try:
+            sa = sess.query(RoomClass).filter_by(room_name=room_name).one() 
+        except NoResultFound:
+            """Handle exception"""
         
         if sa.room_occupants < sa.room_capacity:
             return True # There is space 
@@ -60,14 +64,35 @@ class Room(object):
         sess.query(RoomClass).filter_by(room_name=new_person.assigned_living_space)\
             .update({'room_occupants': RoomClass.room_occupants+1})
 
-    def remove_person_from_room(self, person_id, room_name):
-        sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).delete()
-        sess.commit()
-
     def reallocate_person(self, person_id, room_name):
-        new_person = sess.query(PersonClass).filter_by(person_id=person_id)
-        print (new_person) 
-        self.add_person(new_person)        
+        try:
+            person_details = sess.query(PersonClass).filter_by(person_id=person_id).one()
+            room_details = sess.query(RoomClass).filter_by(room_name=room_name).one()
+            room_type = room_details.room_type
+            space_status = self.space_available(room_name)
+            if space_status:
+                if room_type == 'Office':
+                    current_room = person_details.assigned_office
+                    sess.query(PersonClass).filter_by(person_id=person_id).update({'assigned_office':room_name})
+                    sess.query(RoomClass).filter_by(room_name=room_name).update({'room_occupants':room_details.room_occupants+1})
+                    sess.query(RoomClass).filter_by(room_name=current_room).update({'room_occupants':RoomClass.room_occupants-1})
+
+                elif room_type == 'Living Space':
+                    current_room = person_details.assigned_living_space
+                    sess.query(PersonClass).filter_by(person_id=person_id).update({'assigned_living_space':room_name})
+                    sess.query(RoomClass).filter_by(room_name=room_name).update({'room_occupants':room_details.room_occupants+1})
+                    sess.query(RoomClass).filter_by(room_name=current_room).update({'room_occupants':RoomClass.room_occupants-1})
+
+        except NoResultFound:
+            '''Recored not found'''
+        sess.commit()       
+
+    def remove_person_from_room(self, person_id, room_name):
+        # checker = sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).first()
+        # .delete()
+        # sess.commit()
+        pass 
+
 
 r1 = Room()
 # r1.create_room('Narnia', 'Office', 6)
@@ -85,4 +110,4 @@ r1 = Room()
 # r8 = Room()
 # r8.space_available('Narnia')
 
-r1.remove_person_from_room()
+r1.reallocate_person(5, 'Narnia')
