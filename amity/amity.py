@@ -9,7 +9,7 @@ class Amity(object):
 		pass	
 
 	def print_allocations():
-		pass
+		
 
 	def print_unallocated():
 		pass
