@@ -1,5 +1,4 @@
-from models.amity_database import Room as RoomClass, Person as PersonClass, sess 
-from models.amity_database import RoomMembers 
+from models.amity_database import Room as RoomClass, Person as PersonClass, sess, RoomMembers  
 from sqlalchemy.orm.exc import NoResultFound
 import random  
 
@@ -85,8 +84,16 @@ class Room(object):
 
         except NoResultFound:
             '''Recored not found'''
-        sess.commit()       
+        sess.commit()  
 
+    def print_room(self, room_name):
+        members_in_office = sess.query(PersonClass).filter_by(assigned_office=room_name).all()
+        members_in_living_space = sess.query(PersonClass).filter_by(assigned_living_space=room_name).all()
+        members_in_room = members_in_office + members_in_living_space
+
+        for member in members_in_room:
+            print(member.first_name + ' ' + member.last_name)
+            
     def remove_person_from_room(self, person_id, room_name):
         # checker = sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).first()
         # .delete()
@@ -109,5 +116,4 @@ r1 = Room()
 
 # r8 = Room()
 # r8.space_available('Narnia')
-
-r1.reallocate_person(5, 'Narnia')
+print (r1.print_room('Narnia'))
