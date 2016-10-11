@@ -1,5 +1,5 @@
 from models.amity_database import Room as RoomClass, Person as PersonClass, sess 
-# from people import Person
+from models.amity_database import RoomMembers 
 import random  
 
 class Room(object):
@@ -7,7 +7,6 @@ class Room(object):
         check rooms for available space and reallocate people to different
         rooms 
     """
-    # self.session = sess
     list_of_offices = []
     list_of_living_spaces = []
 
@@ -21,39 +20,69 @@ class Room(object):
         sess.commit()
 
     def space_available(self, room_name):
-        sa = sess.query(RoomClass).filter_by(room_name=room_name).one()
+        sa = sess.query(RoomClass).filter_by(room_name=room_name).first() 
+        
         if sa.room_occupants < sa.room_capacity:
             return True # There is space 
         return False # No space available 
 
     def add_person(self, new_person):         
-        self.list_of_offices = sess.query(RoomClass).filter_by(room_type='Office').all()
-                        
+        self.add_person_to_office(new_person)
+        if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
+            self.add_person_to_living_space(new_person)
+
+    def add_person_to_office(self, new_person):
+        the_offices = []
+        self.list_of_offices = sess.query(RoomClass).filter_by(room_type='Office').all()               
+        
         for office in self.list_of_offices:
             is_there_office_space = self.space_available(office.room_name)
-
             if is_there_office_space:
-                new_person.assigned_office = random.choice(self.list_of_offices).room_name # Is assigning an object from list of room objects queries 
-                sess.query(RoomClass)\
-                    .filter_by(room_name=new_person.assigned_office)\
-                    .update({'room_occupants': RoomClass.room_occupants+1})
+                the_offices.append(office)
 
-        if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
-            self.list_of_living_spaces = sess.query(RoomClass).filter_by(room_type='Living Space').all()
-            for living_space in self.list_of_living_spaces:
-                is_there_living_space = self.space_available(living_space.room_name)
-                if is_there_living_space:
-                    new_person.assigned_living_space = random.choice(self.list_of_living_spaces).room_name
-                    sess.query(RoomClass).filter_by(room_name=new_person.assigned_living_space)\
-                        .update({'room_occupants': RoomClass.room_occupants+1})
+        new_person.assigned_office = random.choice(the_offices).room_name 
+        # Is assigning an object from list of room objects query to 
+        # new_person.assigned_office
+        sess.query(RoomClass)\
+            .filter_by(room_name=new_person.assigned_office)\
+            .update({'room_occupants': RoomClass.room_occupants+1})
 
-    def reallocate_person():
-    	
+    def add_person_to_living_space(self, new_person):
+        the_living = []
+        self.list_of_living_spaces = sess.query(RoomClass).filter_by(room_type='Living Space').all()
+        
+        for living_space in self.list_of_living_spaces:
+            is_there_living_space = self.space_available(living_space.room_name)
+            if is_there_living_space:
+                the_living.append(living_space)
 
+        new_person.assigned_living_space = random.choice(self.list_of_living_spaces).room_name
+        sess.query(RoomClass).filter_by(room_name=new_person.assigned_living_space)\
+            .update({'room_occupants': RoomClass.room_occupants+1})
 
-# r1 = Room()
+    def remove_person_from_room(self, person_id, room_name):
+        sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).delete()
+        sess.commit()
+
+    def reallocate_person(self, person_id, room_name):
+        new_person = sess.query(PersonClass).filter_by(person_id=person_id)
+        print (new_person) 
+        self.add_person(new_person)        
+
+r1 = Room()
 # r1.create_room('Narnia', 'Office', 6)
 # r2 = Room()
 # r2.create_room('Krypton', 'Office', 6)
 # r3 = Room()
 # r3.create_room('Shire', 'Office', 6)
+# r4 = Room()
+# r4.create_room('Ruby', 'Living Space', 4)
+# r5 = Room()
+# r5.create_room('Topaz', 'Living Space', 4)
+# r6 = Room()
+# r6.create_room('Jade', 'Living Space', 4)
+
+# r8 = Room()
+# r8.space_available('Narnia')
+
+r1.remove_person_from_room()
