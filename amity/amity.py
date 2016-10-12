@@ -1,18 +1,37 @@
+from models.amity_database import Room, sess, Person
 
 
 class Amity(object):
-	"""Class that creates text files containing list 
-		of allocated and unallocated people,as well as saves 
-		and loads data to database 
+	"""C 
 	"""
 	def __init__(self):
 		pass	
 
+	# Using @staticmethod to avoid having to use the print_allocation()
+	# with an instance of Amity class 
+	@staticmethod 
 	def print_allocations():
-		pass
+		existing_rooms = sess.query(Room).all()
+		for room in existing_rooms:
+			if room.room_type == 'Office':
+				members_of_the_room = sess.query(Person).filter_by(assigned_office=room.room_name).all()
+				print(room.room_name)
+				print('-' * 30)
+				member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
+				print(', '.join(member_names) + '\n')
 
-	def print_unallocated():
-		pass
+			else:
+				members_of_the_room = sess.query(Person).filter_by(assigned_living_space=room.room_name).all()
+				print(room.room_name)
+				print('-' * 30)
+				member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
+				print(', '.join(member_names) + '\n')
+		 
+	@staticmethod
+	def print_unallocated(): # Prints fellows that said N to want_accomodation  
+		unallocated = sess.query(Person).filter_by(job_group='Fellow').all()
+		unallocated_fellows = [fellow.first_name + ' ' + fellow.last_name for fellow in unallocated_fellows]
+		print(unallocated_fellows)
 
 	def save_state():
 		pass
@@ -20,8 +39,8 @@ class Amity(object):
 	def load_state():
 		pass
 	
-	
-
+# Amity.print_allocations() 
+Amity.print_unallocated()
 	
 
 	
