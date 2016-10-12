@@ -30,8 +30,8 @@ class Amity(object):
 	@staticmethod
 	def print_unallocated(): # Prints fellows that said N to want_accomodation  
 		unallocated = sess.query(Person).filter_by(job_group='Fellow').all()
-		unallocated_fellows = [fellow.first_name + ' ' + fellow.last_name for fellow in unallocated_fellows]
-		print(unallocated_fellows)
+		unallocated_fellows = [fellow.first_name + ' ' + fellow.last_name for fellow in unallocated]
+		[print(fellow) for fellow in unallocated_fellows]
 
 	def save_state():
 		pass
