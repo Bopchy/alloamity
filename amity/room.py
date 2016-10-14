@@ -91,8 +91,7 @@ class Room(object):
         members_in_living_space = sess.query(PersonClass).filter_by(assigned_living_space=room_name).all()
         members_in_room = members_in_office + members_in_living_space
 
-        for member in members_in_room:
-            print(member.first_name + ' ' + member.last_name)
+        [print(member.first_name + ' ' + member.last_name) for member in members_in_room]
             
     def remove_person_from_room(self, person_id, room_name):
         # checker = sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).first()
@@ -101,19 +100,5 @@ class Room(object):
         pass 
 
 
-r1 = Room()
-# r1.create_room('Narnia', 'Office', 6)
-# r2 = Room()
-# r2.create_room('Krypton', 'Office', 6)
-# r3 = Room()
-# r3.create_room('Shire', 'Office', 6)
-# r4 = Room()
-# r4.create_room('Ruby', 'Living Space', 4)
-# r5 = Room()
-# r5.create_room('Topaz', 'Living Space', 4)
-# r6 = Room()
-# r6.create_room('Jade', 'Living Space', 4)
-
-# r8 = Room()
-# r8.space_available('Narnia')
-print (r1.print_room('Narnia'))
+# r1 = Room()
+# r1.create_room('New', 'Living Space', 6)

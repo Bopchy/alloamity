@@ -6,7 +6,8 @@ class Person(object):
 	def __init__(self):
 		pass
 
-	def load_people(self):
+	@staticmethod
+	def load_people(txt_file):
 		pass
 
 	def new_employee(self, first_name, last_name, job_group, want_accomodation, gender):
@@ -17,16 +18,10 @@ class Person(object):
 		new_person.want_accomodation = want_accomodation
 		new_person.gender = gender
 
-		Room.add_person(new_person)
+		Room().add_person(new_person)
 
 		sess.add(new_person)
 		sess.commit()
 	
 # p1 = Person()
-# p1.new_employee('Bopchy', 'Yea', 'Fellow', 'Y', 'F')
-# p2 = Person()
-# p2.new_employee('Bopchy', 'Iiii', 'Fellow', 'N', 'F')		
-# p4 = Person()
-# p4.new_employee('Bopchy', 'Got', 'Staff', 'N', 'F')				
-# p3 = Person()
-# p3.new_employee('Bopchy', 'This', 'Staff', 'N', 'F')	
+# p1.new_employee('Ruth', 'Bochere', 'Fellow', 'Y', 'F')

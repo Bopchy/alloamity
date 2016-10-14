@@ -1,6 +1,5 @@
 from models.amity_database import Room, sess, Person
 
-
 class Amity(object):
 	"""C 
 	"""
@@ -33,14 +32,16 @@ class Amity(object):
 		unallocated_fellows = [fellow.first_name + ' ' + fellow.last_name for fellow in unallocated]
 		[print(fellow) for fellow in unallocated_fellows]
 
-	def save_state():
-		pass
-
+	@staticmethod
 	def load_state():
 		pass
+
+	@staticmethod
+	def save_state():
+		sess.commit()
 	
 # Amity.print_allocations() 
-Amity.print_unallocated()
+# Amity.print_unallocated()
 	
 
 	
