@@ -1,5 +1,5 @@
 from models.amity_database import sess, Person as PersonClass
-from room import Room
+from amity.room import Room
 
 class Person(object):
 	"""docstring for People"""

@@ -10,7 +10,7 @@ class Room(object):
     list_of_offices = []
     list_of_living_spaces = []
 
-    def create_room(self, room_name, room_type, room_capacity):
+    def create_room(room_name, room_type, room_capacity):
         new_room = RoomClass()
         new_room.room_name = room_name
         new_room.room_type = room_type

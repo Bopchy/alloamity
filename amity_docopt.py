@@ -51,7 +51,7 @@ def docopt_cmd(func):
 
 class AlloAmity(cmd.Cmd):
 	
-	intro = 'Welcome to AlloAmity - A Space allocation system'
+	intro = 'Welcome to AlloAmity - A Space allocation system \n\n' 
 	prompt = 'AlloAmity-->'
 
 	@docopt_cmd
@@ -62,7 +62,16 @@ class AlloAmity(cmd.Cmd):
 		Usage: create_room <room_name> <room_type> <room_capacity>
 
 		'''
-		room().create_room(args)
+		room.Room.create_room(args["<room_name>"], args["<room_type>"], args["<room_capacity>"])
+
+	
+	def save_state():
+		'''
+		Persists user session into the database
+		'''
+		save_state()
+
+
 
 if __name__ == '__main__':
 	AlloAmity().cmdloop()
