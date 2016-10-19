@@ -28,9 +28,16 @@ class Amity(object):
 		 
 	@staticmethod
 	def print_unallocated(): # Prints fellows that said N to want_accomodation  
-		unallocated = sess.query(Person).filter_by(job_group='Fellow').all()
+		unallocated = sess.query(Person).filter_by(want_accomodation='N').all()
+
+		if len(unallocated) == 0:
+			print('There are currently no unallocated fellows.')
+			return
+		
 		unallocated_fellows = [fellow.first_name + ' ' + fellow.last_name for fellow in unallocated]
-		[print(fellow) for fellow in unallocated_fellows]
+
+		for fellow in unallocated_fellows:
+			print(fellow)
 
 	@staticmethod
 	def load_state():
@@ -41,7 +48,7 @@ class Amity(object):
 		sess.commit()
 	
 # Amity.print_allocations() 
-# Amity.print_unallocated()
+Amity.print_unallocated()
 	
 
 	

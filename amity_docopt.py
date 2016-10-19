@@ -2,8 +2,8 @@
 	offices and living sapces in Amity, one of Andela's facilties.   
 
 Usage: 
-		amity 	create_room <room_name> <room_type> <room_capacity>
-		amity 	add_person <person_name> <FELLOW|STAFF> [want_accommodation]
+		amity 	create <room_name> <room_type> <room_capacity>
+		amity 	add_person <first_name> <last_name> <job_group> [wants_accommodation] <gender> 
 		amity 	reallocate_person <person_identifier> <new_room_name>
 		amity 	load_people
 		amity 	print_allocations [-o=filename]
@@ -26,8 +26,11 @@ Options:
 
 import sys
 import cmd
-from amity import amity, room, people
+from amity.amity import Amity 
+from amity.room import Room
+from amity.people import Person
 from docopt import docopt, DocoptExit 
+# from amity.room import Room
 
 def docopt_cmd(func):
 
@@ -41,7 +44,7 @@ def docopt_cmd(func):
     	except SystemExit:
     		return
 
-    	return func(self, opt)
+    	return func(opt)
 
     fn.__name__ = func.__name__
     fn.__doc__ = func.__doc__
@@ -56,21 +59,56 @@ class AlloAmity(cmd.Cmd):
 
 	@docopt_cmd
 	def do_create(self, args):
-		''' 
+		""" 
 		Creates new rooms in Amity 
 
-		Usage: create_room <room_name> <room_type> <room_capacity>
+		Usage: create <room_name> <room_type> <room_capacity>
 
-		'''
-		room.Room.create_room(args["<room_name>"], args["<room_type>"], args["<room_capacity>"])
+		"""
+
+		Room.create_room(args["<room_name>"], args["<room_type>"], args["<room_capacity>"])
+		# room.Room().create_room(args)
+	
+	
+	@docopt_cmd
+	def do_add_person(self, args):
+		"""
+		Adds a person to the system and allocates the person to a random room.
+
+		Usage: add_person <first_name> <last_name> <job_group> [<wants_accommodation>] <gender>
+		"""
+
+		Room.add_person(args['<first_name>'], args['<last_name>'], args['<job_group>'], args['<wants_accommodation>'], args['<gender>'])
 
 	
+	@docopt_cmd
+	def do_print_allocations(self):
+		"""
+		Prints a list of allocations onto the screen. Specifying the 
+		optional -o option here outputs the registered allocations to a txt file.
+
+		Usage: print_allocations [-o=filename] 
+		"""
+		
+		Amity.print_allocations()
+
+
 	def save_state():
-		'''
+		"""
 		Persists user session into the database
-		'''
+		"""
 		save_state()
 
+	@docopt_cmd
+	def do_quit(self):
+		"""
+		Exits the application interface on the terminal 
+
+		Usage: quit
+		"""
+		
+		print('\n********** You have exited AlloAmity **********\n')
+		exit()
 
 
 if __name__ == '__main__':

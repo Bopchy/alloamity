@@ -29,10 +29,22 @@ class Room(object):
             return True # There is space 
         return False # No space available 
 
-    def add_person(self, new_person):         
+    def add_person(self, first_name, last_name, job_group, want_accomodation, gender): 
+        new_person = PersonClass()
+        new_person.first_name = first_name
+        new_person.last_name = last_name
+        new_person.job_group = job_group
+        new_person.want_accomodation = want_accomodation
+        new_person.gender = gender
+
+        # Room().add_person(new_person)
+
         self.add_person_to_office(new_person)
         if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
             self.add_person_to_living_space(new_person)
+
+        sess.add(new_person)
+        sess.commit()
 
     def add_person_to_office(self, new_person):
         the_offices = []
@@ -100,5 +112,6 @@ class Room(object):
         pass 
 
 
-# r1 = Room()
+r1 = Room()
 # r1.create_room('New', 'Living Space', 6)
+r1.print_room('Narnia')
