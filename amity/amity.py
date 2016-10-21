@@ -11,11 +11,15 @@ class Amity(object):
 	@staticmethod 
 	def print_allocations():
 		existing_rooms = sess.query(Room).all()
+		if len(existing_rooms) == 0:
+			print('No one has been allocated a room.')
 		for room in existing_rooms:
 			if room.room_type == 'Office':
 				members_of_the_room = sess.query(Person).filter_by(assigned_office=room.room_name).all()
 				print(room.room_name)
 				print('-' * 30)
+				if len (members_of_the_room) == 0:
+					print('This room is empty')
 				member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
 				print(', '.join(member_names) + '\n')
 
@@ -23,6 +27,8 @@ class Amity(object):
 				members_of_the_room = sess.query(Person).filter_by(assigned_living_space=room.room_name).all()
 				print(room.room_name)
 				print('-' * 30)
+				if len (members_of_the_room) == 0:
+					print('This room is empty')
 				member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
 				print(', '.join(member_names) + '\n')
 		 
@@ -48,7 +54,7 @@ class Amity(object):
 		sess.commit()
 	
 # Amity.print_allocations() 
-Amity.print_unallocated()
+# Amity.print_unallocated()
 	
 
 	
