@@ -3,25 +3,25 @@ AlloAmity is an Office Space allocation sysytem that allocates
 offices and living sapces in Amity, one of Andela's facilties.   
 
 Usage: 
-		amity 	create_room <room_name> <room_type> <room_capacity>
-		amity 	add_person <first_name> <last_name> <job_group> <gender> [<waccom>]
-		amity 	reallocate_person <person_identifier> <new_room_name>
-		amity 	load_people 
-		amity 	print_allocations [-o=filename]
-		amity 	print_unallocated [-o=filename]
-		amity 	print_room <room_name>
-		amity 	save_state [--db=database]
-		amity 	load_state <database> 
-		amity 	--help|-h
-		amity 	--version
-		amity 	--interactive|-i
+	amity 	create_room <room_name> <room_type> <room_capacity>
+	amity 	add_person <first_name> <last_name> <job_group> <gender> [want_accomodation]
+	amity 	reallocate_person <person_identifier> <new_room_name>
+	amity 	load_people 
+	amity 	print_allocations [-o=filename]
+	amity 	print_unallocated [-o=filename]
+	amity 	print_room <room_name>
+	amity 	save_state [--db=database]
+	amity 	load_state <database> 
+	amity 	--help|-h
+	amity 	--version
+	amity 	--interactive|-i
 
 Options: 
-		-o 			outputs to a file with specified filename
-		--db 		specifies the database that should be saved to 
-		--help,-h 	shows this help message and exits
-		--version	shows the version of AlloAmity
-		--interactive, -i 	interactive mode 
+	-o 			outputs to a file with specified filename
+	--db 		specifies the database that should be saved to 
+	--help,-h 	shows this help message and exits
+	--version	shows the version of AlloAmity
+	--interactive, -i 	interactive mode 
 
 """
 
@@ -39,7 +39,7 @@ def docopt_cmd(func):
     	try:
     		opt = docopt(fn.__doc__, arg)
     	except DocoptExit as e:
-    		print('\nInvalid Command! Type --help or -h to see list of available commands')
+    		print('\nInvalid Command! Type help to see list of available commands')
     		print(e)
     		return 
     	except SystemExit:
@@ -59,6 +59,15 @@ class AlloAmity(cmd.Cmd):
 	prompt = 'AlloAmity-->'
 
 	@docopt_cmd
+	def do_about(self, args):
+		"""
+		Displays the Usage docstring 
+
+		Usage: about
+		"""
+		print(__doc__)
+
+	@docopt_cmd
 	def do_create_room(self, args):
 		""" 
 		Creates new rooms in Amity 
@@ -74,9 +83,9 @@ class AlloAmity(cmd.Cmd):
 		"""
 		Adds a person to the system and allocates the person to a random room.
 
-		Usage: add_person <first_name> <last_name> <job_group> <gender> [<waccom>]
+		Usage: add_person <first_name> <last_name> <job_group> <gender> [want_accomodation]
 		"""
-		Room.add_person(args['<first_name>'], args['<last_name>'], args['<job_group>'], args['--waccom'], args['<gender>'])
+		Room.add_person(args['<first_name>'], args['<last_name>'], args['<job_group>'], args['want_accomodation'], args['<gender>'])
 
 	
 	@docopt_cmd
@@ -119,11 +128,21 @@ class AlloAmity(cmd.Cmd):
 		"""
 		Room().print_room(arg['<room_name>'])
 
-	
 	@docopt_cmd
-	def save_state():
+	def load_state(self, args):
+		"""
+		Loads data from a database into the application.
+
+		Usage: load_state <sqlite_database> 
+		"""
+		load_state(args['<sqlite_database>'])
+
+	@docopt_cmd
+	def save_state(self, args):
 		"""
 		Persists user session into the database
+		
+		Usage: save_state
 		"""
 		save_state()
 

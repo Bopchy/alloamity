@@ -1,21 +1,28 @@
-from models.amity_database import Room, sess, Person
+from models.amity_database import *
 
 class Amity(object):
-	"""C 
+	"""
+	Class that print allocations of persons within amity, as well as
+	unallocated fellows 
 	"""
 	def __init__(self):
-		pass	
+		self.rooms, self.persons = self.load_state()
 
-	# Using @staticmethod to avoid having to use the print_allocation()
-	# with an instance of Amity class 
-	@staticmethod 
-	def print_allocations():
-		existing_rooms = sess.query(Room).all()
+	def load_state(self, db_name='cp1.db'):
+		def rooms():
+			return sess.query(Room)
+		def persons():
+			return sess.query(Person)
+
+		return (rooms(), persons(),)  
+ 
+	def print_allocations(self):
+		existing_rooms = self.rooms.all()
 		if len(existing_rooms) == 0:
 			print('No one has been allocated a room.')
 		for room in existing_rooms:
 			if room.room_type == 'Office':
-				members_of_the_room = sess.query(Person).filter_by(assigned_office=room.room_name).all()
+				members_of_the_room = self.persons.filter_by(assigned_office=room.room_name).all()
 				print(room.room_name)
 				print('-' * 30)
 				if len (members_of_the_room) == 0:
@@ -24,7 +31,7 @@ class Amity(object):
 				print(', '.join(member_names) + '\n')
 
 			else:
-				members_of_the_room = sess.query(Person).filter_by(assigned_living_space=room.room_name).all()
+				members_of_the_room = self.persons.filter_by(assigned_living_space=room.room_name).all()
 				print(room.room_name)
 				print('-' * 30)
 				if len (members_of_the_room) == 0:
@@ -32,10 +39,8 @@ class Amity(object):
 				member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
 				print(', '.join(member_names) + '\n')
 		 
-	@staticmethod
-	def print_unallocated(): # Prints fellows that said N to want_accomodation  
-		unallocated = sess.query(Person).filter_by(want_accomodation='N').all()
-
+	def print_unallocated(self): # Prints fellows that said N to want_accomodation  
+		unallocated = self.persons.filter_by(want_accomodation='N').all()
 		if len(unallocated) == 0:
 			print('There are currently no unallocated fellows.')
 			return
@@ -46,19 +51,13 @@ class Amity(object):
 			print(fellow)
 
 	@staticmethod
-	def load_state():
-		pass
-
-	@staticmethod
 	def save_state():
 		sess.commit()
 	
-# Amity.print_allocations() 
+a1 = Amity()
+a1.print_unallocated() 
 # Amity.print_unallocated()
-	
-
-	
-
-			
-			
-
+# data = Amity.load_state(db)
+# narnias = (data['Persons'].filter_by(assigned_office='Narnia').all())
+# [print(narnia.first_name) for narnia in narnias]
+# # print(data)
