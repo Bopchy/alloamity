@@ -1,11 +1,12 @@
 from app.amity import Amity
-from models.amity_database import Room as RoomModel, Person as PersonModel, sess
+from models.amity_database import Room as RoomModel, Person as PersonModel, DatabaseCreate
 from sqlalchemy.orm.exc import NoResultFound
 from pathlib import Path
 import os
 import random
 
-rooms, persons = Amity.load_state() 
+rooms, persons = Amity().load_state() 
+DC = DatabaseCreate()
 
 class Room(object):
 
@@ -18,15 +19,14 @@ class Room(object):
     list_of_offices = []
     list_of_living_spaces = []
 
-    def create_room(room_name, room_type, room_capacity):
+    def create_room(self, room_name, room_type):
         new_room = RoomModel()
         new_room.room_name = room_name
         new_room.room_type = room_type
-        new_room.room_capacity = room_capacity
         new_room.room_occupants = 0
-        sess.add(new_room)
+        DC.session.add(new_room)
         
-        sess.commit()
+        DC.session.commit()
 
     def space_available(self, room_name):
         try:
@@ -50,13 +50,13 @@ class Room(object):
         if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
             self.add_person_to_living_space(new_person)
 
-        sess.add(new_person)
+        DC.session.add(new_person)
         
-        sess.commit()
+        DC.session.commit()
 
     def add_person_to_office(self, new_person):
         the_offices = []
-        self.list_of_offices = rooms.filter_by(room_type='Office').all()
+        self.list_of_offices = rooms.filter_by(room_type='O').all()
 
         for office in self.list_of_offices:
             is_there_office_space = self.space_available(office.room_name)
@@ -72,7 +72,7 @@ class Room(object):
 
     def add_person_to_living_space(self, new_person):
         the_living = []
-        self.list_of_living_spaces = rooms.filter_by(room_type='Living Space').all()
+        self.list_of_living_spaces = rooms.filter_by(room_type='L').all()
 
         for living_space in self.list_of_living_spaces:
             is_there_living_space = self.space_available(
@@ -92,7 +92,7 @@ class Room(object):
             room_type = room_details.room_type
             space_status = self.space_available(room_name)
             if space_status:
-                if room_type == 'Office':
+                if room_type == 'O':
                     current_room = person_details.assigned_office
                     persons.filter_by(person_id=person_id).update(
                         {'assigned_office': room_name})
@@ -101,7 +101,7 @@ class Room(object):
                     rooms.filter_by(room_name=current_room).update(
                         {'room_occupants': RoomModel.room_occupants-1})
 
-                elif room_type == 'Living Space':
+                elif room_type == 'L':
                     current_room = person_details.assigned_living_space
                     persons.filter_by(person_id=person_id).update(
                         {'assigned_living_space': room_name})
@@ -112,7 +112,7 @@ class Room(object):
 
         except NoResultFound:
             '''Record not found'''
-        sess.commit()
+        DC.session.commit()
 
     @staticmethod
     def load_people(txt_file):
@@ -135,17 +135,19 @@ class Room(object):
          for member in members_in_room]
 
     def remove_person_from_room(self, person_id, room_name):
-        # checker = sess.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).first()
+        # checker = DC.session.query(RoomMembers).filter_by(person_id=person_id, room_name=room_name).first()
         # .delete()
-        # sess.commit()
+        # DC.session.commit()
         pass
 
 
-r1 = Room()
-# r1.create_room('New', 'Living Space', 6)
-r1.print_room('Narnia')
+# r1 = Room()
+# r1.create_room('New', 'L')
+# r2 = Room()
+# r2.create_room('Narnia', 'O')
+# r1.print_room('Narnia')
 # Room.load_people('input1')
 # r9 = Room()
 # # r9.add_person('Neema', 'Bora', 'Fellow', 'Y', 'F')
 # r9.reallocate_person('8', 'rom4')
-# Room.load_people('input3')
+Room.load_people('input3')

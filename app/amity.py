@@ -1,5 +1,7 @@
 from models.amity_database import *
 
+DC = DatabaseCreate()
+
 class Amity(object):
 	"""
 	Class that print allocations of persons within amity, as well as
@@ -10,9 +12,9 @@ class Amity(object):
 
 	def load_state(self, db_name='cp1.db'):
 		def rooms():
-			return sess.query(Room)
+			return DC.session.query(Room)
 		def persons():
-			return sess.query(Person)
+			return DC.session.query(Person)
 
 		return (rooms(), persons(),)  
  
@@ -52,10 +54,10 @@ class Amity(object):
 
 	@staticmethod
 	def save_state():
-		sess.commit()
+		DC.session.commit()
 	
-a1 = Amity()
-a1.print_unallocated() 
+# a1 = Amity()
+# a1.print_unallocated() 
 # Amity.print_unallocated()
 # data = Amity.load_state(db)
 # narnias = (data['Persons'].filter_by(assigned_office='Narnia').all())

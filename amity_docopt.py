@@ -27,9 +27,10 @@ Options:
 
 import sys
 import cmd
-from amity.amity import Amity 
-from amity.room import Room
-from amity.people import Person
+from models import amity_database  
+from app.amity import Amity 
+from app.room import Room
+from app.people import Person
 from docopt import docopt, DocoptExit 
 import os
 
@@ -53,10 +54,11 @@ def docopt_cmd(func):
 
     return fn
 
+
 class AlloAmity(cmd.Cmd):
 	
 	intro = '\nWelcome to AlloAmity - A Space allocation system \n' 
-	prompt = 'AlloAmity-->'
+	prompt = 'AlloAmity-->'		
 
 	@docopt_cmd
 	def do_about(self, args):
