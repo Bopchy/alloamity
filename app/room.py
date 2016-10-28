@@ -1,12 +1,11 @@
 from app.amity import Amity
-from models.amity_database import Room as RoomModel, Person as PersonModel, DatabaseCreate
+from models.amity_database import Room as RoomModel, Person as PersonModel, DC
 from sqlalchemy.orm.exc import NoResultFound
 from pathlib import Path
 import os
 import random
 
 rooms, persons = Amity().load_state() 
-DC = DatabaseCreate()
 
 class Room(object):
 
@@ -20,21 +19,27 @@ class Room(object):
     list_of_living_spaces = []
 
     def create_room(self, room_name, room_type):
-        new_room = RoomModel()
-        new_room.room_name = room_name
-        new_room.room_type = room_type
-        new_room.room_occupants = 0
-        DC.session.add(new_room)
+        try:
+            new_room = RoomModel()
+            new_room.room_name = room_name
+            new_room.room_type = room_type
+            new_room.room_occupants = 0
+            DC.session.add(new_room)
+        except:
         
-        DC.session.commit()
 
     def space_available(self, room_name):
         try:
             sa = rooms.filter_by(room_name=room_name).one()
+            if sa.room_type == 'O':
+                room_capacity = 6
+            elif sa.room_type == 'L':
+                room_capacity = 4
+
         except NoResultFound:
             """Handle exception"""
 
-        if sa.room_occupants < sa.room_capacity:
+        if sa.room_occupants < room_capacity:
             return True  # There is space
         return False  # No space available
 

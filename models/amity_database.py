@@ -12,7 +12,7 @@ class DatabaseCreate(object):
 		self.db_name = db_name
 		if self.db_name:
 			self.engine = create_engine('sqlite:///'+ self.db_name + '.sqlite')
-			print('Your database' + db_name + 'has been created')
+			print('Your database' + db_name + ' has been created')
 	
 		else:
 			self.engine = create_engine('sqlite:///default_alloamity_db.sqlite')
@@ -20,6 +20,8 @@ class DatabaseCreate(object):
 		DBSession = sessionmaker(bind=self.engine)
 		self.session = DBSession()
 		Base.metadata.create_all(self.engine)
+
+DC = DatabaseCreate()
 
 class Person(Base):
 	""" 

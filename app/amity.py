@@ -1,6 +1,5 @@
 from models.amity_database import *
 
-DC = DatabaseCreate()
 
 class Amity(object):
 	"""
@@ -55,6 +54,15 @@ class Amity(object):
 	@staticmethod
 	def save_state():
 		DC.session.commit()
+
+
+######### Print list of all the fellows in Amity
+######### Print all the living spaces in Amity
+######### Print all offices
+############## Print a list of all the staff members in Amity 
+
+
+
 	
 # a1 = Amity()
 # a1.print_unallocated() 

@@ -19,14 +19,7 @@ class TestRoom(unittest.TestCase):
 		room_name = 'War Room'
 		room_type = 'Office'
 
-		session.add(mock_room_name, mock_room_type)
-		session.commit()
 		
-		D = CreateTestDatabase()
-		q = session.D.query.test_db(Room)
-		l = []
-		[l.append(room) for rooms in Room]
-		self.assertIn(l,'War Room')
 
 	def tests_rooms_check_for_available_space(self):
 		pass

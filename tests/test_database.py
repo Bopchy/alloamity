@@ -1,7 +1,6 @@
 import os
-from models.amity_database import DatabaseCreate
+from models.amity_database import DC
 
-DC = DatabaseCreate()
 
 class CreateTestDatabase(object):
 	test_db = DatabaseCreate('test_db')
