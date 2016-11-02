@@ -29,7 +29,8 @@ class TestAmity(unittest.TestCase):
         # check there is no database connection as well
 
     def tests_if_amity_creates_rooms(self):
-        """Tests amity creates a room object, and stores the room object in a tuple called rooms()"""
+        """Tests amity creates a room object, and stores
+        the room object in a tuple called rooms()"""
 
         self.assertEqual(len(self.rooms), 0)
         self.Amity.create_room('Krypton', 'O')
