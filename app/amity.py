@@ -17,92 +17,83 @@ class Amity(object):
 
     @staticmethod
     def load_state(db_name='default_alloamity_db.sqlite'):
-        # list_of_all_rooms = []
-        # all_rooms = session.query(Room).all()
-        # # print(all_rooms)
+        list_of_all_rooms = []
+        all_rooms = session.query(Room).all()
 
-        # def rooms():
-        #     all_rooms = self.session.query(Room).all()
-        #     # print(all_rooms)
-        #     for each_room in all_rooms:
-        #         rooms.append(list(each_room))
-        #     # print(list_of_all_rooms)
+        def rooms():
+            all_rooms = self.session.query(Room).all()
+            for each_room in all_rooms:
+                rooms.append(list(each_room))
 
-        # def persons():
-        #     return self.session.query(Person)
+        def persons():
+            return self.session.query(Person)
 
-        # return (rooms(), persons(),)
-        pass
+        return (rooms(), persons(),)
 
     def space_available(self, room_name):
-        # sa = rooms.filter_by(room_name=room_name).one()
+        sa = rooms.filter_by(room_name=room_name).one()
 
-        # if sa.room_type == 'O':
-        #     room_capacity = Office().room_capacity
-        # elif sa.room_type == 'L':
-        #     room_capacity = LivingSpace().room_capacity
+        if sa.room_type == 'O':
+            room_capacity = Office().room_capacity
+        elif sa.room_type == 'L':
+            room_capacity = LivingSpace().room_capacity
 
-        # if sa.room_occupants < room_capacity:
-        #     return True  # There is space
-        # return False  # No space available
-        pass
+        if sa.room_occupants < room_capacity:
+            return True  # There is space
+        return False  # No space available
 
     def create_room(self, room_name, room_type):
-
-        # new_room = Room()
-        # new_room.room_name = room_name
-        # new_room.room_type = room_type
-        # new_room.room_occupants = 0
-        # self.session.add(new_room)
-        pass
+        new_room = Room()
+        new_room.room_name = room_name
+        new_room.room_type = room_type
+        new_room.room_occupants = 0
+        self.session.add(new_room)
 
     def add_person(self, first_name, last_name, job_group, want_accomodation='N', gender='N/A'):
-        # new_person = Person()
-        # new_person.first_name = first_name
-        # new_person.last_name = last_name
-        # new_person.job_group = job_group
-        # new_person.want_accomodation = want_accomodation
-        # new_person.gender = gender
+        new_person = Person()
+        new_person.first_name = first_name
+        new_person.last_name = last_name
+        new_person.job_group = job_group
+        new_person.want_accomodation = want_accomodation
+        new_person.gender = gender
 
-        # self.add_person_to_office(new_person)
+        self.add_person_to_office(new_person)
 
-        # if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
-        #     self.add_person_to_living_space(new_person)
+        if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
+            self.add_person_to_living_space(new_person)
 
-        # self.session.add(new_person)
-        pass
+        self.session.add(new_person)
 
     def add_person_to_office(self, new_person):
-        # the_offices = []
-        # self.list_of_offices = self.rooms.filter_by(room_type='O').all()
+        the_offices = []
+        self.list_of_offices = self.rooms.filter_by(room_type='O').all()
 
-        # for office in self.list_of_offices:
-        #     is_there_office_space = super(Office, self).space_available(office.room_name)
-        #     if is_there_office_space:
-        #         the_offices.append(office)
+        for office in self.list_of_offices:
+            is_there_office_space = super(Office, self).space_available(office.room_name)
+            if is_there_office_space:
+                the_offices.append(office)
 
-        # new_person.assigned_office = random.choice(the_offices).room_name
-        # # Is assigning an object from list of room objects query to
-        # # new_person.assigned_office
+        new_person.assigned_office = random.choice(the_offices).room_name
+        # Is assigning an object from list of room objects query to
+        # new_person.assigned_office
 
-        # rooms.filter_by(room_name=new_person.assigned_office)\
-        #     .update({'room_occupants': Room.room_occupants+1})
-        pass
+        rooms.filter_by(room_name=new_person.assigned_office)\
+            .update({'room_occupants': Room.room_occupants+1})
 
     def add_person_to_living_space(self, new_person):
-        # the_living = []
-        # self.list_of_living_spaces = self.rooms.filter_by(room_type='L').all()
+        the_living = []
+        self.list_of_living_spaces = self.rooms.filter_by(room_type='L').all()
 
-        # for living_space in self.list_of_living_spaces:
-        #     is_there_living_space = self.space_available(
-        #         living_space.room_name)
-        #     if is_there_living_space:
-        #         the_living.append(living_space)
+        for living_space in self.list_of_living_spaces:
+            is_there_living_space = self.space_available(
+                living_space.room_name)
+            if is_there_living_space:
+                the_living.append(living_space)
 
-        # new_person.assigned_living_space = random.choice(
-        #     self.list_of_living_spaces).room_name
-        # rooms.filter_by(room_name=new_person.assigned_living_space)\
-        #     .update({'room_occupants': RoomModel.room_occupants+1})
+        new_person.assigned_living_space = random.choice(
+            self.list_of_living_spaces).room_name
+        rooms.filter_by(room_name=new_person.assigned_living_space)\
+            .update({'room_occupants': RoomModel.room_occupants+1})
         pass
 
     @staticmethod
