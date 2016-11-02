@@ -1,45 +1,119 @@
+from app.livingspace import LivingSpace
+from app.office import Office
+from models.session import Session
 from models.amity_database import *
+from app.people import Person
+
+
+session = Session().create_session()
 
 
 class Amity(object):
 
-    """
-    Class that print allocations of persons within amity, as well as
-    unallocated fellows
-    """
+    """Class Amity"""
 
     def __init__(self, session):
         self.session = session
-        self.rooms, self.persons = self.load_state()
 
-    def load_state(self, db_name='default_alloamity_db.sqlite'):
-        def rooms():
-            return self.session.query(Room)
+    @staticmethod
+    def load_state(db_name='default_alloamity_db.sqlite'):
+        # list_of_all_rooms = []
+        # all_rooms = session.query(Room).all()
+        # # print(all_rooms)
 
-        def persons():
-            return self.session.query(Person)
+        # def rooms():
+        #     all_rooms = self.session.query(Room).all()
+        #     # print(all_rooms)
+        #     for each_room in all_rooms:
+        #         rooms.append(list(each_room))
+        #     # print(list_of_all_rooms)
 
-        return (rooms(), persons(),)
+        # def persons():
+        #     return self.session.query(Person)
+
+        # return (rooms(), persons(),)
+        pass
 
     def space_available(self, room_name):
-        sa = rooms.filter_by(room_name=room_name).one()
+        # sa = rooms.filter_by(room_name=room_name).one()
 
-        if sa.room_type == 'O':
-            room_capacity = 6
-        elif sa.room_type == 'L':
-            room_capacity = 4
+        # if sa.room_type == 'O':
+        #     room_capacity = Office().room_capacity
+        # elif sa.room_type == 'L':
+        #     room_capacity = LivingSpace().room_capacity
 
-        if sa.room_occupants < room_capacity:
-            return True  # There is space
-        return False  # No space available
+        # if sa.room_occupants < room_capacity:
+        #     return True  # There is space
+        # return False  # No space available
+        pass
 
     def create_room(self, room_name, room_type):
 
-        new_room = Room()
-        new_room.room_name = room_name
-        new_room.room_type = room_type
-        new_room.room_occupants = 0
-        self.session.add(new_room)
+        # new_room = Room()
+        # new_room.room_name = room_name
+        # new_room.room_type = room_type
+        # new_room.room_occupants = 0
+        # self.session.add(new_room)
+        pass
+
+    def add_person(self, first_name, last_name, job_group, want_accomodation='N', gender='N/A'):
+        # new_person = Person()
+        # new_person.first_name = first_name
+        # new_person.last_name = last_name
+        # new_person.job_group = job_group
+        # new_person.want_accomodation = want_accomodation
+        # new_person.gender = gender
+
+        # self.add_person_to_office(new_person)
+
+        # if new_person.job_group == 'Fellow' and new_person.want_accomodation == 'Y':
+        #     self.add_person_to_living_space(new_person)
+
+        # self.session.add(new_person)
+        pass
+
+    def add_person_to_office(self, new_person):
+        # the_offices = []
+        # self.list_of_offices = self.rooms.filter_by(room_type='O').all()
+
+        # for office in self.list_of_offices:
+        #     is_there_office_space = super(Office, self).space_available(office.room_name)
+        #     if is_there_office_space:
+        #         the_offices.append(office)
+
+        # new_person.assigned_office = random.choice(the_offices).room_name
+        # # Is assigning an object from list of room objects query to
+        # # new_person.assigned_office
+
+        # rooms.filter_by(room_name=new_person.assigned_office)\
+        #     .update({'room_occupants': Room.room_occupants+1})
+        pass
+
+    def add_person_to_living_space(self, new_person):
+        # the_living = []
+        # self.list_of_living_spaces = self.rooms.filter_by(room_type='L').all()
+
+        # for living_space in self.list_of_living_spaces:
+        #     is_there_living_space = self.space_available(
+        #         living_space.room_name)
+        #     if is_there_living_space:
+        #         the_living.append(living_space)
+
+        # new_person.assigned_living_space = random.choice(
+        #     self.list_of_living_spaces).room_name
+        # rooms.filter_by(room_name=new_person.assigned_living_space)\
+        #     .update({'room_occupants': RoomModel.room_occupants+1})
+        pass
+
+    @staticmethod
+    def load_people(txt_file):
+        file_name = txt_file
+        with open(file_name) as file:
+            for line in file.readlines():
+                person = line.replace('\n', '').split()
+                print(person)
+                Room().add_person(*person)
+                # Using python splat to add members of list as arguments to add_person()
 
     def print_room(self, room_name):
         members_in_office = self.persons.filter_by(
@@ -73,6 +147,31 @@ class Amity(object):
                 member_names = [member.first_name + ' ' + member.last_name for member in members_of_the_room]
                 print(', '.join(member_names) + '\n')
 
+    def reallocate_person(self, person_id, room_name):
+        person_details = persons.filter_by(person_id=person_id).one()
+        # person_job_group =
+        room_details = rooms.filter_by(room_name=room_name).one()
+        room_type = room_details.room_type
+        space_status = Room().space_available(room_name)
+        if space_status:
+            if room_type == 'O':
+                current_room = person_details.assigned_office
+                persons.filter_by(person_id=person_id).update(
+                    {'assigned_office': room_name})
+                rooms.filter_by(room_name=room_name).update(
+                    {'room_occupants': room_details.room_occupants+1})
+                rooms.filter_by(room_name=current_room).update(
+                    {'room_occupants': RoomModel.room_occupants-1})
+
+            elif room_type == 'L':
+                current_room = person_details.assigned_living_space
+                persons.filter_by(person_id=person_id).update(
+                    {'assigned_living_space': room_name})
+                rooms.filter_by(room_name=room_name).update(
+                    {'room_occupants': room_details.room_occupants+1})
+                rooms.filter_by(room_name=current_room).update(
+                    {'room_occupants': RoomModel.room_occupants-1})
+
     def print_unallocated(self):  # Prints fellows that said N to want_accomodation
         unallocated = self.persons.filter_by(want_accomodation='N').all()
         if len(unallocated) == 0:
@@ -84,32 +183,18 @@ class Amity(object):
         for fellow in unallocated_fellows:
             print(fellow)
 
+    def exit_room(self, person_id, room_name):
+        person_details = persons.filter_by(person_id=person_id).one()
+        person_office_details = persons.filter(assigned_office)
+        person_living_space_details = person_details.filter(assigned_living_space)
+        try:
+            if person_office_details is room_name:
+                persons.filter_by(assigned_office=room_name).update({'assigned_office': 'NULL'})
+            if person_living_space_details is room_name:
+                persons.filter_by(assigned_living_space=room_name).update({'assigned_living_space': 'NULL'})
+        except Exception:
+            return 'Person' + person_id + 'is not in that room.'
+
     def save_state(self):
         self.session.commit()
         print('Your session has been saved.')
-
-
-# Print list of all the fellows in Amity
-# Print all the living spaces in Amity
-# Print all offices
-# Print a list of all the staff members in Amity
-
-# r1 = Amity()
-# # r1.create_room('New', 'L')
-# r2 = Amity()
-# # r2.create_room('Shire', 'O')
-# r1.create_room('Winterfell', 'O')
-# r2.create_room('Kings Landing', 'L')
-# r1.print_room('Narnia')
-# r1.print_allocations()
-# r1.print_unallocated()
-
-# Amity.save_state()
-
-# a1 = Amity()
-# a1.print_unallocated()
-# Amity.print_unallocated()
-# data = Amity.load_state(db)
-# narnias = (data['Persons'].filter_by(assigned_office='Narnia').all())
-# [print(narnia.first_name) for narnia in narnias]
-# # print(data)
