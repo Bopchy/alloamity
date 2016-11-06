@@ -3,7 +3,7 @@ AlloAmity is an Office Space allocation sysytem that allocates
 offices and living sapces in Amity, one of Andela's facilties.
 
 Usage:
-	amity 	create_room <room_name> <room_type> <room_capacity>
+	amity 	create_room <room_name> <room_type> 
 	amity 	add_person <first_name> <last_name> <job_group> <gender> [want_accomodation]
 	amity 	reallocate_person <person_identifier> <new_room_name>
 	amity 	load_people
@@ -75,7 +75,7 @@ class AlloAmity(cmd.Cmd):
         """
         Creates new rooms in Amity
 
-        Usage: create <room_name> <room_type> <room_capacity>
+        Usage: create <room_name> <room_type> 
 
         """
         Room.create_room(

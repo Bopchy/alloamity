@@ -5,7 +5,5 @@ class Office(Room):
 
     """Class Office"""
 
-    def __init__(self, args):
-        pass
-
-    room_capacity = 4
+    room_capacity = 6
+    room_type = Room.O
