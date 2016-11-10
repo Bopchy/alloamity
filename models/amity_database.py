@@ -1,5 +1,6 @@
 import os
 import sys
+
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
@@ -15,11 +16,10 @@ class Person(Base):
     person_id = Column(Integer, primary_key=True)
     first_name = Column(String(15), index=True)
     last_name = Column(String(15))
-    gender = Column(String(1))  # Restrict to either female or male
     job_group = Column(String(7), index=True)
+    want_accomodation = Column(String(1), nullable=True)
     assigned_office = Column(String(15), index=True)
     assigned_living_space = Column(String(15), nullable=True, index=True)
-    want_accomodation = Column(String(1), nullable=True)
 
 
 class Room(Base):
@@ -30,3 +30,25 @@ class Room(Base):
     room_name = Column(String, unique=True)
     room_type = Column(String(1), index=True)
     room_occupants = Column(Integer, default=0)
+
+
+class Session(object):
+
+    def __init__(self, db_name=None):
+        self.db_name = db_name
+        if self.db_name:
+            self.engine = create_engine('sqlite:///' + self.db_name + '.sqlite')
+            print('Your database' + db_name + ' has been created')
+
+        else:
+            self.engine = create_engine('sqlite:///alloamity_db.sqlite')
+
+    def create_session(self):
+        DBSession = sessionmaker(bind=self.engine, autoflush=False)
+        self.session = DBSession()
+        return self.session
+
+    def create_database(self, db_name='alloamity_db.sqlite'):
+        sessionmaker(bind=self.engine, autoflush=False)
+        Base.metadata.create_all(self.engine)
+        return True

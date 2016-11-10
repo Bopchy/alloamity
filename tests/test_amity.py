@@ -1,5 +1,6 @@
 import os
 import unittest
+
 from app.amity import Amity
 from app.livingspace import LivingSpace
 from app.office import Office
@@ -96,6 +97,7 @@ class TestAmity(unittest.TestCase):
         self.assertIn(person, room_2)
 
     def tests_amity_loads_state(self):
+
         pass
 
     def tests_amity_saves_state(self):
