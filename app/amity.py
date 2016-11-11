@@ -49,7 +49,8 @@ class Amity(object):
     ):
         """Adds person into an office and living space randomly."""
         if job_group.lower() not in ['staff', 'fellow']:
-            print('Invalid input for job_group. Use: FELLOW for fellow, or STAFF for staff.')
+            print(
+                'Invalid input for job_group. Use: FELLOW for fellow, or STAFF for staff.')
             return 'Wrong input.'
 
         if want_accomodation.lower() not in ['y', 'n', 'yes', 'no']:
@@ -158,7 +159,8 @@ class Amity(object):
         if room_name.upper() not in all_rooms:
             print("Room doesn't exist")
         for person in Amity.persons:
-            if person.assigned_living_space == room_name.upper() or person.assigned_office == room_name.upper():
+            if person.assigned_living_space == room_name.upper(
+            ) or person.assigned_office == room_name.upper():
                 room_members.append(person)
         print('Members of %s' % room_name.upper() + '\n' + '-' * 30)
         for member in room_members:
@@ -206,21 +208,26 @@ class Amity(object):
                     if (person.last_name == person_last_name):
                         break
 
-                # Check that person is not moving from office to living space and vice versa
+                # Check that person is not moving from office to living space
+                # and vice versa
                 if person.assigned_office is not room_name:
                     if room_type.upper() == 'O':
-                        if room_name in [office.room_name for office in offices]:
+                        if room_name in [
+                                office.room_name for office in offices]:
                             person.assigned_office = room_name
                             print(person.assigned_office)
                         else:
-                            print(person.last_name + ' cannot move from office to Living space.')
+                            print(person.last_name +
+                                  ' cannot move from office to Living space.')
                             return 'Failed.'
                     if room_type.upper() == 'L':
-                        if room_name in [living_space.room_name for living_space in living_spaces]:
+                        if room_name in [
+                                living_space.room_name for living_space in living_spaces]:
                             print(person.assigned_living_space)
                             person.assigned_living_space = room_name
                         else:
-                            print(person.last_name + ' cannot move from Living space to office.')
+                            print(person.last_name +
+                                  ' cannot move from Living space to office.')
                             return 'Failed.'
                     for room in Amity.rooms:
                         if room.room_name == room_name:

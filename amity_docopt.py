@@ -3,7 +3,7 @@ AlloAmity is an Office Space allocation sysytem that allocates
 offices and living sapces in Amity, one of Andela's facilties.
 
 Usage:
-    amity   create_room <room_name> <room_type> 
+    amity   create_room <room_name> <room_type>
     amity   add_person <first_name> [--last_name='no'] <job_group> [--want_accomodation='N']
     amity   reallocate_person <person_identifier> <new_room_name>
     amity   load_people <txt_file>
@@ -63,32 +63,25 @@ class AlloAmity(cmd.Cmd):
 
     @docopt_cmd
     def do_about(self, args):
-        """
-        Displays the Usage docstring
+        """Displays the Usage docstring
 
-        Usage: about
-        """
+        Usage: about"""
         print(__doc__)
 
     @docopt_cmd
     def do_create_room(self, args):
-        """
-        Creates new rooms in Amity
+        """Creates new rooms in Amity
 
-        Usage: create <room_name> <room_type> 
-
-        """
+        Usage: create <room_name> <room_type> """
         a.create_room(
             args["<room_name>"],
             args["<room_type>"])
 
     @docopt_cmd
     def do_add_person(self, args):
-        """
-        Adds a person to the system and allocates the person to a random room.
+        """Adds a person to the system and allocates the person to a random room.
 
-        Usage: add_person <first_name> <last_name> <job_group> [--want_accomodation=N]
-        """
+        Usage: add_person <first_name> <last_name> <job_group> [--want_accomodation=N]"""
         want_accomodation = args['--want_accomodation']
         if want_accomodation is None:
             want_accomodation = 'N'
@@ -101,67 +94,53 @@ class AlloAmity(cmd.Cmd):
 
     @docopt_cmd
     def do_load_people(self, args):
-        """
-        Adds people to rooms from a txt file. See Appendix 1A for text input format.
+        """Adds people to rooms from a txt file. See Appendix 1A for text input format.
 
-        Usage: load_people <txt_file> 
-        """
+        Usage: load_people <txt_file>"""
         a.load_people(args['<txt_file>'])
 
     @docopt_cmd
     def do_print_allocations(self, args):
-        """
-        Prints a list of allocations onto the screen. Specifying the
+        """ Prints a list of allocations onto the screen. Specifying the
         optional -o option here outputs the registered allocations to a txt file.
 
-        Usage: print_allocations [--o=file_name]
-        """
+        Usage: print_allocations [--o=file_name]"""
         a.print_allocations(args['--o'])
 
     @docopt_cmd
     def do_print_unallocated(self, args):
-        """
-        Prints a list of unallocated people to the screen. Specifying the -o
+        """Prints a list of unallocated people to the screen. Specifying the -o
         option here outputs the information to the txt file provided.
 
-        Usage: print_unallocated [--o=file_name]
-        """
+        Usage: print_unallocated [--o=file_name]"""
         a.print_unallocated(args['--o'])
 
     @docopt_cmd
     def do_print_room(self, arg):
-        """
-        Prints  the names of all the people in room_name on the screen.
+        """Prints  the names of all the people in room_name on the screen.
 
-        Usage: print_room <room_name>
-        """
+        Usage: print_room <room_name>"""
         a.print_room(arg['<room_name>'])
 
     @docopt_cmd
     def do_load_state(self, args):
-        """
-        Loads data from a database into the application.
+        """Loads data from a database into the application.
 
-        Usage: load_state <sqlite_database>
-        """
+        Usage: load_state <sqlite_database>"""
         a.load_state(args['<sqlite_database>'])
 
     @docopt_cmd
     def do_save_state(self, args):
-        """
-        Persists user session into the database
+        """Persists user session into the database
 
-        Usage: save_state [--db=database]
-        """
+        Usage: save_state [--db=database]"""
         a.save_state(args['--db'])
 
     @docopt_cmd
     def do_quit(self, arg):
-        """
-        Exits the application interface on the terminal
+        """Exits the application interface on the terminal
 
-        Usage: quit
-        """
+        Usage: quit"""
         print('\n********** You have exited AlloAmity **********\n')
         exit()
 

@@ -80,7 +80,7 @@ class TestAmity(unittest.TestCase):
             self.amity = None
             Amity.persons = []
             Amity.rooms = []
-            os.remove('load.txt')
+            os.remove('alloamity_db.sqlite')
             os.remove('test_allocations.txt')
             os.remove('test_unallocated.txt')
         except Exception:
