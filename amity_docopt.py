@@ -4,35 +4,35 @@ offices and living sapces in Amity, one of Andela's facilties.
 
 Usage:
     amity   create_room <room_name> <room_type> 
-    amity   add_person <first_name> <last_name> <job_group> [want_accomodation]
+    amity   add_person <first_name> [--last_name='no'] <job_group> [--want_accomodation='N']
     amity   reallocate_person <person_identifier> <new_room_name>
-    amity   load_people
-    amity   print_allocations [-o=filename]
-    amity   print_unallocated [-o=filename]
+    amity   load_people <txt_file>
+    amity   print_allocations [--o=file_name]
+    amity   print_unallocated [--o=file_name]
     amity   print_room <room_name>
     amity   save_state [--db=database]
     amity   load_state <database>
-    amity   --help|-h
-    amity   --version
-    amity   --interactive|-i
+    amity   help
 
 Options:
     -o          outputs to a file with specified filename
     --db        specifies the database that should be saved to
-    --help,-h   shows this help message and exits
-    --version   shows the version of AlloAmity
-    --interactive, -i   interactive mode
 
 """
 
+import os
 import sys
 import cmd
-from models import amity_database
+from docopt import docopt, DocoptExit
+
+from models.amity_database import Room, Person as PeronModel, Session
 from app.amity import Amity
 from app.room import Room
 from app.people import Person
-from docopt import docopt, DocoptExit
-import os
+
+
+session = Session().create_session()
+a = Amity(session)
 
 
 def docopt_cmd(func):
@@ -78,7 +78,7 @@ class AlloAmity(cmd.Cmd):
         Usage: create <room_name> <room_type> 
 
         """
-        Room.create_room(
+        a.create_room(
             args["<room_name>"],
             args["<room_type>"])
 
@@ -87,13 +87,13 @@ class AlloAmity(cmd.Cmd):
         """
         Adds a person to the system and allocates the person to a random room.
 
-        Usage: add_person <first_name> <last_name> <job_group> [want_accomodation]
+        Usage: add_person <first_name> <last_name> <job_group> [--want_accomodation=N]
         """
-        want_accomodation = args['want_accomodation']
-        if want_accomodation == None:
+        want_accomodation = args['--want_accomodation']
+        if want_accomodation is None:
             want_accomodation = 'N'
 
-        Room.add_person(
+        a.add_person(
             args['<first_name>'],
             args['<last_name>'],
             args['<job_group>'],
@@ -104,9 +104,9 @@ class AlloAmity(cmd.Cmd):
         """
         Adds people to rooms from a txt file. See Appendix 1A for text input format.
 
-        Usage: load_people
+        Usage: load_people <txt_file> 
         """
-        Room.load_people(args)
+        a.load_people(args['<txt_file>'])
 
     @docopt_cmd
     def do_print_allocations(self, args):
@@ -114,9 +114,9 @@ class AlloAmity(cmd.Cmd):
         Prints a list of allocations onto the screen. Specifying the
         optional -o option here outputs the registered allocations to a txt file.
 
-        Usage: print_allocations [-o=filename]
+        Usage: print_allocations [--o=file_name]
         """
-        Amity.print_allocations()
+        a.print_allocations(args['--o'])
 
     @docopt_cmd
     def do_print_unallocated(self, args):
@@ -124,9 +124,9 @@ class AlloAmity(cmd.Cmd):
         Prints a list of unallocated people to the screen. Specifying the -o
         option here outputs the information to the txt file provided.
 
-        Usage: print_unallocated [-o=filename]
+        Usage: print_unallocated [--o=file_name]
         """
-        Amity.print_unallocated()
+        a.print_unallocated(args['--o'])
 
     @docopt_cmd
     def do_print_room(self, arg):
@@ -135,25 +135,25 @@ class AlloAmity(cmd.Cmd):
 
         Usage: print_room <room_name>
         """
-        Room().print_room(arg['<room_name>'])
+        a.print_room(arg['<room_name>'])
 
     @docopt_cmd
-    def load_state(self, args):
+    def do_load_state(self, args):
         """
         Loads data from a database into the application.
 
         Usage: load_state <sqlite_database>
         """
-        load_state(args['<sqlite_database>'])
+        a.load_state(args['<sqlite_database>'])
 
     @docopt_cmd
-    def save_state(self, args):
+    def do_save_state(self, args):
         """
         Persists user session into the database
 
-        Usage: save_state
+        Usage: save_state [--db=database]
         """
-        save_state()
+        a.save_state(args['--db'])
 
     @docopt_cmd
     def do_quit(self, arg):

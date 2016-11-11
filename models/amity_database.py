@@ -43,7 +43,7 @@ class Session(object):
         else:
             self.engine = create_engine('sqlite:///alloamity_db.sqlite')
 
-    def create_session(self):
+    def create_session(self, db_name='alloamity_db.sqlite'):
         DBSession = sessionmaker(bind=self.engine, autoflush=False)
         self.session = DBSession()
         return self.session

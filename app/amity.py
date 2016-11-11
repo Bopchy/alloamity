@@ -61,7 +61,7 @@ class Amity(object):
         new_person.first_name = first_name
         new_person.last_name = last_name.upper()
         new_person.job_group = job_group
-        new_person.want_accomodation = want_accomodation
+        new_person.want_accomodation = want_accomodation.upper()
         self.add_person_to_office(new_person)
         self.add_person_to_living_space(new_person)
 
@@ -98,7 +98,7 @@ class Amity(object):
             if room.room_type == 'L' and room.room_occupants < 4:
                 available_living_spaces.append(room)
 
-        if new_person.job_group.upper() == 'FELLOW' and new_person.want_accomodation.upper() == 'Y':
+        if new_person.job_group.upper() == 'FELLOW' and new_person.want_accomodation == 'Y':
             if not available_living_spaces:
                 Amity.unallocated.append(new_person)
                 print('No Living Spaces available. Person added to unallocated.')
@@ -147,7 +147,7 @@ class Amity(object):
                     person = line.replace('\n', '').split()
                     Amity(session).add_person(*person)
 
-        except (FileNotFoundError, TypeError):
+        except FileNotFoundError:
             print("It seems that file doesn't exist.")
             return 'File not found.'
 
@@ -232,7 +232,7 @@ class Amity(object):
         else:
             print("Person does not exist")
 
-    def print_unallocated(self, file_name=None):
+    def print_unallocated(self, file_name=''):
         """Prints a list of unallocated people to the screen or specified file_name."""
         no_office = [person.first_name + ' ' + person.last_name
                      for person in Amity.unallocated
@@ -293,8 +293,10 @@ class Amity(object):
             if not os.path.exists('alloamity_db.sqlite'):
                 Session().create_database()
                 session.commit()
+                return 'Stored to user specified db.'
             else:
                 session.commit()
+                return 'Stored to default db.'
         except Exception:
             print('This data already exists in the database.')
             return 'Integrity error.'

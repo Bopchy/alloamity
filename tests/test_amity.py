@@ -1,11 +1,15 @@
 import os
 import unittest
+from mock import patch
 
 from app.amity import Amity
 from app.livingspace import LivingSpace
 from app.office import Office
 from app.people import Person
-from models.session import Session
+from models.amity_database import Room, Person as PersonModel, Session
+
+
+test_session = Session().create_session('test_db.sqlite')
 
 
 class TestAmity(unittest.TestCase):
@@ -13,98 +17,75 @@ class TestAmity(unittest.TestCase):
     """Tests Class Amity"""
 
     def setUp(self):
-        self.amity = Amity()
-        all_rooms = [
-            ('Narnia', 'O'),
-            ('Shire', 'O'),
-            ('Python', 'L'),
-            ('Javascript', 'L')
-        ]
-        all_people = [
-            ('ROSY', 'BROWN', 'STAFF'),
-            ('BREVER', 'POLAS', 'FELLOW', 'Y'),
-            ('KHADIJA', 'MALUM', 'FELLOW')
-        ]
+        self.amity = Amity(test_session)
 
     def tests_amity_system_initializes_with_nothing(self):
         self.assertEqual(len(self.amity.rooms), 0)
         self.assertEqual(len(self.amity.persons), 0)
-        # check there is no database connection as well
 
     def tests_if_amity_creates_rooms(self):
         """Tests amity creates a room object, and stores
         the room object in a tuple called rooms()"""
+        with patch('app.amity.Amity.rooms'):
+            return_value = 'Success!! New room created.'
+            self.assertEqual(self.amity.create_room('Krypton', 'O'), return_value)
+            self.assertEqual(self.amity.create_room('Ruby', 'L'), return_value)
 
-        self.assertEqual(len(self.amity.rooms), 0)
-        self.amity.create_room('Krypton', 'O')
-        self.assertIn(('Krypton', 'O'), self.amity.rooms)
-
-        self.amity.create_room('Ruby', 'L')
-        self.assertIn(('Ruby', 'L'), self.amity.rooms)
-
-    def tests_if_amity_checks_space_available(self):
-        livingspace = self.amity.create_room('Python', 'L')
-        LivingSpace.room_occupants = 2
-        livingspace_room_capacity = LivingSpace.room_capacity
-        self.assertEqual(livingspace_room_capacity, 4)
-        self.assertTrue(self.amity.space_available(livingspace))
-
-        office = self.amity.create_room('Topaz', 'O')
-        Office.room_occupants = 4
-        office_room_capacity = Office.room_capacity
-        self.assertEqual(office_room_capacity, 6)
-        self.assertFalse(self.amity.space_available(office))
+    def tests_if_amity_adds_to_unallocated_if_no_rooms(self):
+        with patch('app.amity.Amity.persons'):
+            self.assertEqual(self.amity.add_person('Rose', 'Flowers', 'Staff'), None)
+            self.assertEqual(self.amity.add_person('Benny', 'Flinn', 'Fellow', 'Y'), None)
 
     def tests_if_amity_adds_person(self):
-        self.amity.add_person('Rose', 'Flowers', 'Staff')
-        self.amity.add_person('Benny', 'Flinn', 'Fellow', 'Y')
-        self.assertIn(('Benny', 'Flinn', 'Fellow', 'Y'), Amity.persons)
-        self.assertIn(('Rose', 'Flowers', 'Staff'), Amity.persons)
-        self.assertEqual(len(Amity.persons), 2)
-        # Asserts that not more people than specified have been added
+        self.amity.add_person('Dido', 'Manjik', 'Fellow', 'Y')
+        p = [p.last_name for p in Amity.persons if p.last_name == 'Manjik'.upper()]
+        self.assertIn('Manjik'.upper(), p)
 
     def test_amity_prints_allocations_to_text_file(self):
-        self.amity.print_allocations({'--o': 'test_allocations.txt'})
+        self.amity.create_room('Shire', 'o')
+        self.amity.add_person('Fredd', 'Junito', 'Staff')
+        self.amity.print_allocations('test_allocations')
         self.assertTrue(os.path.exists('test_allocations.txt'))
-        file_name_open = open('test_allocations.txt')
-        while file_name_open:
-            line = f.readline()
-            self.assertIn(('ROSA PARKS FELLOW Y'), line)
-        os.remove('test_allocations.txt')
 
     def tests_amity_prints_unallocated_to_text_file(self):
         self.amity.add_person('Peter', 'Wright', 'Fellow')
-        self.amity.print_unallocated({'--o': 'test_unallocated.txt'})
+        self.amity.print_unallocated('test_unallocated')
         self.assertTrue(os.path.exists('test_unallocated.txt'))
-        file_name_open = open('test_unallocated.txt')
-        while file_name_open:
-            line = file_name_open.readline()
-            self.assertIn('PETER WRIGHT FELLOW', line)
-        os.remove('test_unallocated.txt')
 
     def tests_amity_loads_people(self):
-        self.amity.persons = []
-        self.amity.load_people(os.path.dirname(__file__))
-        self.assertIn(('RACHEL', 'SPARKS', 'STAFF'), self.amity.persons)
+        self.assertEqual(self.amity.persons, [])
+        self.amity.load_people('load.txt')
+        self.assertEqual(len(self.amity.persons), 1)
 
     def tests_amity_reallocates_persons(self):
-        room = self.amity.create_room('Hogspush', 'O')
-        person = self.amity.add_person('Stella', 'Marks', 'Staff')
-        person.person_id = 1
-        self.assertIn(person, room)
-        room_2 = self.amity.create_room('Stardom', 'O')
-        self.amity.reallocate_person(person.person_id, room_2)
-        self.assertIn(person, room_2)
+        self.amity.create_room('Hogspush', 'O')
+        self.amity.add_person('Stella', 'Marks', 'Staff')
+        self.amity.create_room('Stardom', 'O')
+        self.amity.reallocate_person('MARKS', 'Stardom', 'O')
+        x = [p.assigned_office for p in Amity.persons if p.last_name == 'MARKS']
+        self.assertIn('Stardom'.upper(), x)
 
     def tests_amity_loads_state(self):
-
-        pass
+        self.amity.load_state()
+        self.assertFalse(os.path.exists('alloamity_db.sqlite'))
 
     def tests_amity_saves_state(self):
-        pass
+        self.amity.create_room('Narnia', 'o')
+        self.amity.add_person('Dandelion', 'Muku', 'Staff')
+        self.amity.save_state()
+        self.assertTrue(os.path.exists('alloamity_db.sqlite'))
 
     def tearDown(self):
-        self.amity = None
+        try:
+            self.amity = None
+            Amity.persons = []
+            Amity.rooms = []
+            os.remove('load.txt')
+            os.remove('test_allocations.txt')
+            os.remove('test_unallocated.txt')
+        except Exception:
+            print('Error deleting test files.')
+            return 'Error deleting test files.'
 
 if __name__ == '__main__':
     unittest.main()
