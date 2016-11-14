@@ -3,3 +3,5 @@ DS_Store
 *.pyc
 *.sqlite
 __pycache__
+.coverage
+.coveragerc

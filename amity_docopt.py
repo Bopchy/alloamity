@@ -5,7 +5,7 @@ offices and living sapces in Amity, one of Andela's facilties.
 Usage:
     amity   create_room <room_name> <room_type>
     amity   add_person <first_name> [--last_name='no'] <job_group> [--want_accomodation='N']
-    amity   reallocate_person <person_identifier> <new_room_name>
+    amity   reallocate_person <person_last_name> <room_name> <room_type>
     amity   load_people <txt_file>
     amity   print_allocations [--o=file_name]
     amity   print_unallocated [--o=file_name]
@@ -20,15 +20,11 @@ Options:
 
 """
 
-import os
-import sys
 import cmd
 from docopt import docopt, DocoptExit
 
-from models.amity_database import Room, Person as PeronModel, Session
 from app.amity import Amity
-from app.room import Room
-from app.people import Person
+from models.amity_database import Session
 
 
 session = Session().create_session()
@@ -59,7 +55,7 @@ def docopt_cmd(func):
 class AlloAmity(cmd.Cmd):
 
     intro = '\nWelcome to AlloAmity - A Space allocation system \n'
-    prompt = 'AlloAmity-->'
+    prompt = '(AlloAmity) $ '
 
     @docopt_cmd
     def do_about(self, args):
@@ -73,9 +69,7 @@ class AlloAmity(cmd.Cmd):
         """Creates new rooms in Amity
 
         Usage: create <room_name> <room_type> """
-        a.create_room(
-            args["<room_name>"],
-            args["<room_type>"])
+        a.create_room(args["<room_name>"], args["<room_type>"])
 
     @docopt_cmd
     def do_add_person(self, args):
@@ -90,7 +84,18 @@ class AlloAmity(cmd.Cmd):
             args['<first_name>'],
             args['<last_name>'],
             args['<job_group>'],
-            want_accomodation)
+            want_accomodation
+        )
+
+    @docopt_cmd
+    def do_reallocate_person(self, args):
+        """Reallocate the person with person_last_name to the new_room.
+
+        Usage: reallocate_person <person_last_name> <room_name> <room_type>"""
+        a.reallocate_person(
+            args['<person_last_name>'],
+            args['<room_name>'],
+            args['<room_type>'])
 
     @docopt_cmd
     def do_load_people(self, args):
