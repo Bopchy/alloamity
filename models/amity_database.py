@@ -14,12 +14,23 @@ class Person(Base):
     """ Database table containing Fellows and Staff"""
     __tablename__ = "person"
     person_id = Column(Integer, primary_key=True)
-    first_name = Column(String(15), index=True)
-    last_name = Column(String(15))
+    full_name = Column(String(50), index=True)
     job_group = Column(String(7), index=True)
     want_accomodation = Column(String(1), nullable=True)
     assigned_office = Column(String(15), index=True)
     assigned_living_space = Column(String(15), nullable=True, index=True)
+
+
+# class UnallocatedPerson(Base):
+
+#     """Database table containing Unallocated Persons"""
+#     __tablename__ = "unallocated_person"
+#     person_id = Column(Integer, primary_key=True)
+#     full_name = Column(String(50), index=True)
+#     job_group = Column(String(7), index=True)
+#     want_accomodation = Column(String(1), nullable=True)
+#     assigned_office = Column(String(15), index=True)
+#     assigned_living_space = Column(String(15), nullable=True, index=True)
 
 
 class Room(Base):

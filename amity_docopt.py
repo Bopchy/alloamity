@@ -5,7 +5,7 @@ offices and living sapces in Amity, one of Andela's facilties.
 Usage:
     amity   create_room <room_name> <room_type>
     amity   add_person <first_name> [--last_name='no'] <job_group> [--want_accomodation='N']
-    amity   reallocate_person <person_last_name> <room_name> <room_type>
+    amity   reallocate_person <person_id> <room_name> <room_type>
     amity   load_people <txt_file>
     amity   print_allocations [--o=file_name]
     amity   print_unallocated [--o=file_name]
@@ -91,9 +91,9 @@ class AlloAmity(cmd.Cmd):
     def do_reallocate_person(self, args):
         """Reallocate the person with person_last_name to the new_room.
 
-        Usage: reallocate_person <person_last_name> <room_name> <room_type>"""
+        Usage: reallocate_person <person_id> <room_name> <room_type>"""
         a.reallocate_person(
-            args['<person_last_name>'],
+            args['<person_id>'],
             args['<room_name>'],
             args['<room_type>'])
 
