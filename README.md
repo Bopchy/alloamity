@@ -1,4 +1,4 @@
-# Alloamity - Office Space Allocation System
+# AlloAmity - Office Space Allocation System
 
 Alloamity is a command line office space allocation system for one of Andela's facilities known as Amity. Amity has both Offices and Livng spaces. Offices can hold a maximum of six people, whereas living spaces can hold a maximum of four people. Both fellows and staff members require an office space, while only fellows can be allocated a living space. Alloamity allocates staff members and fellows to rooms randomly.  
 
@@ -26,7 +26,7 @@ To run tests run:
 
 	nosetests
 
-## To run the appication, run:
+## To run the appication:
 
 	python amity_docopt.py
 
