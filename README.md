@@ -26,7 +26,7 @@ To run tests run:
 
 	nosetests
 
-## To run the appication:
+## To run the application:
 
 	python amity_docopt.py
 
