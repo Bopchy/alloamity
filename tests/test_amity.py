@@ -66,7 +66,7 @@ class TestAmity(unittest.TestCase):
     def tests_amity_loads_people(self):
         self.assertEqual(self.amity.persons, [])
         self.amity.load_people('load.txt')
-        self.assertEqual(len(self.amity.persons), 8)
+        self.assertEqual(len(self.amity.persons), 5)
 
     def tests_amity_reallocates_persons(self):
         self.amity.create_room('Hogspush', 'O')

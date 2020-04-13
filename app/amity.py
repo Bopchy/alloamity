@@ -148,8 +148,6 @@ class Amity(object):
                 for line in file.readlines():
                     person = line.replace('\n', '').split()
                     print(person)
-                    # import ipdb
-                    # ipdb.set_trace()
                     self.add_person(*person)
 
         except FileNotFoundError:
